@@ -1,0 +1,167 @@
+<div class="container">
+
+    <h1 class="mt-5 d-flex justify-content-center">Film Reviews</h1>
+    <div class="row mt-5">
+        <div class="col-10">
+            <table mat-table [dataSource]="localStorageFilmReview">
+
+                <ng-container matColumnDef="title">
+                    <th mat-header-cell *matHeaderCellDef>Title</th>
+                    <td mat-cell *matCellDef="let film">{{film.title}}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="director">
+                    <th mat-header-cell *matHeaderCellDef>Director</th>
+                    <td mat-cell *matCellDef="let film">{{film.director}}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="mainActor">
+                    <th mat-header-cell *matHeaderCellDef>Main Actor</th>
+                    <td mat-cell *matCellDef="let film">{{film.mainActor}}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="description">
+                    <th mat-header-cell *matHeaderCellDef>Description</th>
+                    <td mat-cell *matCellDef="let film">{{film.description}}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="summary">
+                    <th mat-header-cell *matHeaderCellDef>Summary</th>
+                    <td mat-cell *matCellDef="let film">{{film.summary}}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="rating">
+                    <th mat-header-cell *matHeaderCellDef>Rating</th>
+                    <td mat-cell *matCellDef="let film">{{film.rating}}</td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+
+                <tr mat-row *matRowDef="let film;columns:displayedColumns"></tr>
+            </table>
+        </div>
+        <div class="col-2">
+            <div class="d-flex justify-content-end mt-3">
+                <mat-form-field appearance="fill">
+                    <mat-label>Filter</mat-label>
+                    <mat-select [(value)]="selected">
+                        <mat-option *ngFor="let rating of ratings" [value]="rating.value"
+                            (click)="sortFilm(rating.value)">
+                            {{rating.viewValue}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+    </div>
+    
+    <!--TODO: Need to put all below this and it's TS logic in a different component -->
+    <div class="mt-5 d-flex justify-content-center">
+        <button mat-raised-button color="primary" (click)="showForm('div1')">Add film</button>
+        <button mat-raised-button color="accent" (click)="showForm('div2')" class="me-3 ms-3">Update film</button>
+        <button mat-raised-button color="warn" (click)="showForm('div3')">Delete film</button>
+    </div>
+
+    <form class="example-form mt-5" *ngIf="div1">
+        <div class="row">
+            <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label [ngStyle]="{'color':invalidFilm === true ? 'red' : 'black' }">Title</mat-label>
+                <input #inputTitle matInput>
+            </mat-form-field>
+            <p *ngIf="invalidFilm" style="color:red">Movie already exists!</p>
+        </div>
+        <div class="row">
+            <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Director</mat-label>
+                <input #inputDirector matInput>
+            </mat-form-field>
+        </div>
+        <div class="row">
+            <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Main Actor</mat-label>
+                <input #inputMainActor matInput>
+            </mat-form-field>
+        </div>
+        <div class="row">
+            <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Description</mat-label>
+                <input #inputDescription matInput>
+            </mat-form-field>
+        </div>
+        <div class="row">
+            <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Summary</mat-label>
+                <textarea #inputSummary matInput></textarea>
+            </mat-form-field>
+        </div>
+        <div class="row">
+            <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Rating</mat-label>
+                <input #inputRating matInput>
+            </mat-form-field>
+        </div>
+        <div class="row">
+            <button type="button" mat-raised-button color="primary"
+                (click)="addFilm(inputTitle.value, inputDirector.value, inputMainActor.value, inputDescription.value, inputSummary.value, inputRating.value)">Add
+                film</button>
+        </div>
+    </form>
+
+    <form class="example-form mt-5" *ngIf="div2">
+        <div class="row">
+            <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Title</mat-label>
+                <input #inputTitle matInput>
+            </mat-form-field>
+        </div>
+        <div class="row">
+            <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Director</mat-label>
+                <input #inputDirector matInput>
+            </mat-form-field>
+        </div>
+        <div class="row">
+            <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Main Actor</mat-label>
+                <input #inputMainActor matInput>
+            </mat-form-field>
+        </div>
+        <div class="row">
+            <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Description</mat-label>
+                <input #inputDescription matInput>
+            </mat-form-field>
+        </div>
+        <div class="row">
+            <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Summary</mat-label>
+                <textarea #inputSummary matInput></textarea>
+            </mat-form-field>
+        </div>
+        <div class="row">
+            <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Rating</mat-label>
+                <input #inputRating matInput>
+            </mat-form-field>
+        </div>
+        <div class="row">
+            <button type="button" mat-raised-button color="accent"
+                (click)="updateFilm(inputTitle.value, inputDirector.value, inputMainActor.value, inputDescription.value, inputSummary.value, inputRating.value)">Update
+                film</button>
+        </div>
+    </form>
+
+    <form class="example-form mt-5" *ngIf="div3">
+        <div class="row">
+            <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Title</mat-label>
+                <input #inputTitle matInput>
+            </mat-form-field>
+        </div>
+        <div class="row">
+            <button type="button" mat-raised-button color="warn" (click)="removeFilm(inputTitle.value)">Remove
+                film</button>
+        </div>
+    </form>
+
+</div>
