@@ -1,0 +1,15 @@
+C:\Riverbed Internship\C#\Week 1\Homework\week-1-cs-alexivan0\bin\Debug\net6.0\week-1-cs-alexivan0.exe
+C:\Riverbed Internship\C#\Week 1\Homework\week-1-cs-alexivan0\bin\Debug\net6.0\week-1-cs-alexivan0.deps.json
+C:\Riverbed Internship\C#\Week 1\Homework\week-1-cs-alexivan0\bin\Debug\net6.0\week-1-cs-alexivan0.runtimeconfig.json
+C:\Riverbed Internship\C#\Week 1\Homework\week-1-cs-alexivan0\bin\Debug\net6.0\week-1-cs-alexivan0.dll
+C:\Riverbed Internship\C#\Week 1\Homework\week-1-cs-alexivan0\bin\Debug\net6.0\ref\week-1-cs-alexivan0.dll
+C:\Riverbed Internship\C#\Week 1\Homework\week-1-cs-alexivan0\bin\Debug\net6.0\week-1-cs-alexivan0.pdb
+C:\Riverbed Internship\C#\Week 1\Homework\week-1-cs-alexivan0\obj\Debug\net6.0\week-1-cs-alexivan0.csproj.AssemblyReference.cache
+C:\Riverbed Internship\C#\Week 1\Homework\week-1-cs-alexivan0\obj\Debug\net6.0\week-1-cs-alexivan0.GeneratedMSBuildEditorConfig.editorconfig
+C:\Riverbed Internship\C#\Week 1\Homework\week-1-cs-alexivan0\obj\Debug\net6.0\week-1-cs-alexivan0.AssemblyInfoInputs.cache
+C:\Riverbed Internship\C#\Week 1\Homework\week-1-cs-alexivan0\obj\Debug\net6.0\week-1-cs-alexivan0.AssemblyInfo.cs
+C:\Riverbed Internship\C#\Week 1\Homework\week-1-cs-alexivan0\obj\Debug\net6.0\week-1-cs-alexivan0.csproj.CoreCompileInputs.cache
+C:\Riverbed Internship\C#\Week 1\Homework\week-1-cs-alexivan0\obj\Debug\net6.0\week-1-cs-alexivan0.dll
+C:\Riverbed Internship\C#\Week 1\Homework\week-1-cs-alexivan0\obj\Debug\net6.0\ref\week-1-cs-alexivan0.dll
+C:\Riverbed Internship\C#\Week 1\Homework\week-1-cs-alexivan0\obj\Debug\net6.0\week-1-cs-alexivan0.pdb
+C:\Riverbed Internship\C#\Week 1\Homework\week-1-cs-alexivan0\obj\Debug\net6.0\week-1-cs-alexivan0.genruntimeconfig.cache

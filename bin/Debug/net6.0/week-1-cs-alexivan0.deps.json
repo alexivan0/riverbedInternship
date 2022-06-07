@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v6.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v6.0": {
+      "week-1-cs-alexivan0/1.0.0": {
+        "runtime": {
+          "week-1-cs-alexivan0.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "week-1-cs-alexivan0/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
