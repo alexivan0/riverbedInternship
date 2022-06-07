@@ -1,0 +1,23 @@
+<table class="table">
+    <thead>
+      <tr>
+        <th class="col-2">Name</th>
+        <th class="col-6">Description</th>
+        <th class="col-1">Completed</th>
+        <th class="col-1">Complete</th>
+        <th class="col-1">Remove</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let task of arrayTasks">
+        <td *ngIf="!task.completed; else elseBlock">{{task.name}}</td>
+        <ng-template #elseBlock><td><del>{{task.name}}</del></td></ng-template>
+        <td *ngIf="!task.completed; else elseBlock2">{{task.description}}</td>
+        <ng-template #elseBlock2><td><del>{{task.description}}</del></td></ng-template>
+        <td><i *ngIf="task.completed" class="fa fa-check fa-2x" style="color:green"></i></td>
+        <td><button type="button" class="btn btn-success" (click)="toggleTask(task)">Complete</button></td>
+        <td><button type="button" class="btn btn-danger" (click)="deleteTask(task)">Delete</button></td>
+        
+      </tr>
+    </tbody>
+  </table>

@@ -1,0 +1,16 @@
+<!-- Angular template driven form -->
+<div class="mt-5">
+    <h2 class="text-center">Add Task</h2>
+    <form #submitForm="ngForm" (ngSubmit)="submitTask(taskName.value, taskDescription.value)">
+      <div>
+        <label for="taskName" class="form-label">Task Name</label>
+        <input type="text" required #taskName #taskNameValid="ngModel" class="form-control" id="taskName" ngModel name="taskName" placeholder="Required">
+        <p *ngIf="taskNameValid.invalid && taskNameValid.touched" style="color:red">Task Name is required.</p>
+      </div>
+      <div class="mt-3">
+        <label for="taskDescription" class="form-label">Task Description</label>
+        <input type="text" #taskDescription class="form-control" id="taskDescription" ngModel name="taskDescription" placeholder="Optional">
+      </div>
+      <button type="submit" class="btn btn-success mt-3" [disabled]="submitForm.invalid">Add Task</button>
+    </form>
+  </div>
