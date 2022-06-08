@@ -1,2 +1,2 @@
 # alexivanProjects
-Homework &amp; Projects from during the internship.
+A branch for each project.
