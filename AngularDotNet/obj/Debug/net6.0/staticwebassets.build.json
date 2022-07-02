@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "Hash": "bRV2SayqGR1wEN2kDMGpS5jUK0O9rUSPs15TioNE0JI=",
+  "Source": "AngularDotNet",
+  "BasePath": "_content/AngularDotNet",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "AngularDotNet\\wwwroot",
+      "Source": "AngularDotNet",
+      "ContentRoot": "C:\\Users\\anton\\source\\repos\\AngularDotNet\\wwwroot\\",
+      "BasePath": "_content/AngularDotNet",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "C:\\Users\\anton\\source\\repos\\AngularDotNet\\wwwroot\\favicon.ico",
+      "SourceId": "AngularDotNet",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\anton\\source\\repos\\AngularDotNet\\wwwroot\\",
+      "BasePath": "_content/AngularDotNet",
+      "RelativePath": "favicon.ico",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\favicon.ico"
+    }
+  ]
+}
