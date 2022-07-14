@@ -36,6 +36,14 @@
                 "${workspaceFolder}/PortfolioTracker.csproj"
             ],
             "problemMatcher": "$msCompile"
+        },
+        {
+            "type": "npm",
+            "script": "start",
+            "path": "ClientApp",
+            "problemMatcher": [],
+            "label": "npm: start - ClientApp",
+            "detail": "run-script-os"
         }
     ]
 }

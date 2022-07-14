@@ -1,0 +1,72 @@
+<div class="container" *ngIf="assetList">
+  <div class="row">
+    <div class="col-9">
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="col-1">Id</th>
+            <th class="col-1">PortfolioId</th>
+            <th class="col-2">Symbol</th>
+            <th class="col-1">Units</th>
+            <th class="col-1">Modify</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let asset of assetList">
+            <td>{{ asset.assetId }}</td>
+            <td>{{ asset.portfolioId }}</td>
+            <td>{{ asset.symbol }}</td>
+            <td>{{ asset.units }}</td>
+            <td><button class="btn btn-primary"
+                (click)="toggleUpdateAsset(asset.assetId, asset.portfolioId, asset.units, asset.symbol)">Modify</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="col-2">
+      <div class="mb-5">
+        <form [formGroup]="formGroup" (ngSubmit)="postAsset(symbol.value, +units.value)">
+          <mat-form-field>
+            <input formControlName="symbol" matInput type="text" [matAutocomplete]="auto" #symbol class="form-control" placeholder="Symbol">
+            <mat-autocomplete #auto="matAutocomplete">
+              <mat-option *ngFor="let symbol of filteredSymbols" [value]="symbol">
+                {{symbol}}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+          <input type="number" class="form-control" #units min="0" placeholder="Units">
+          <button type="submit" class="btn btn-success mt-3">Add Asset</button>
+        </form>
+      </div>
+
+      <div class="mt-3">
+        <form *ngIf="toggleShowUpdateAsset" #submitForm="ngForm"
+          (ngSubmit)="updateAsset(+assetId.value, +portfolioId.value, symbol.value, +units.value)">
+          <div class="mt-3">
+            <label for="assetId" class="form-label">Asset Id</label>
+            <input type="number" #assetId class="form-control" id="assetId" [ngModel]="updatedAsset.assetId"
+              name="assetId" disabled>
+          </div>
+          <div>
+            <label for="portfolioId" class="form-label">Portfolio Id</label>
+            <input type="number" #portfolioId class="form-control" id="portfolioId" [ngModel]="updatedAsset.portfolioId"
+              name="portfolioId" disabled>
+          </div>
+          <div>
+            <label for="symbol" class="form-label">Symbol</label>
+            <input type="text" #symbol class="form-control" id="symbol" [ngModel]="updatedAsset.symbol" name="symbol"
+              disabled>
+          </div>
+          <div>
+            <label for="units" class="form-label">Units</label>
+            <input type="number" #units class="form-control" id="units" [ngModel]="updatedAsset.units" name="units">
+          </div>
+          <button type="submit" class="btn btn-primary mt-3">Modify Asset</button>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>

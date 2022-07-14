@@ -9,12 +9,14 @@ import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { HomeComponent } from './home/home.component';
 import { CounterComponent } from './counter/counter.component';
 import { FetchDataComponent } from './fetch-data/fetch-data.component';
-import { MarketDataComponent } from './market-data/market-data.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {MatAutocompleteModule} from '@angular/material/autocomplete';
-import {MatFormFieldModule} from '@angular/material/form-field';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { ReactiveFormsModule } from '@angular/forms';
-import {MatInput, MatInputModule} from '@angular/material/input'
+import { MatInputModule } from '@angular/material/input'
+import { MarketDataService } from 'src/app/services/market-data.service';
+import { TradeTrackerComponent } from './trade-tracker/trade-tracker.component';
+import { PortfolioComponent } from './portfolio/portfolio.component';
 
 
 @NgModule({
@@ -24,7 +26,8 @@ import {MatInput, MatInputModule} from '@angular/material/input'
     HomeComponent,
     CounterComponent,
     FetchDataComponent,
-    MarketDataComponent,
+    PortfolioComponent,
+    TradeTrackerComponent,
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -34,7 +37,8 @@ import {MatInput, MatInputModule} from '@angular/material/input'
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'counter', component: CounterComponent },
       { path: 'fetch-data', component: FetchDataComponent },
-      { path: 'market-data', component: MarketDataComponent }
+      { path: 'portfolio', component: PortfolioComponent },
+      { path: 'trade-tracker', component: TradeTrackerComponent }
     ]),
     BrowserAnimationsModule,
     MatAutocompleteModule,
@@ -42,7 +46,7 @@ import {MatInput, MatInputModule} from '@angular/material/input'
     ReactiveFormsModule,
     MatInputModule
   ],
-  providers: [],
+  providers: [MarketDataService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

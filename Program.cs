@@ -1,4 +1,9 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using PortfolioTracker.Data;
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<PortfolioTrackerContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("PortfolioTrackerContext") ?? throw new InvalidOperationException("Connection string 'PortfolioTrackerContext' not found.")));
 
 // Add services to the container.
 
@@ -16,7 +21,6 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-
 
 app.MapControllerRoute(
     name: "default",

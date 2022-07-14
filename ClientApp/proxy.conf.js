@@ -8,6 +8,8 @@ const PROXY_CONFIG = [
     context: [
       "/weatherforecast",
       "/api/marketdata",
+      "/api/assets",
+      "/api/TradeHistories",
       "https://api.binance.com/api/v3/ticker/price/btcusdt"
     ],
     target: target,

@@ -8,6 +8,7 @@
         ]
     }],
     "configurations": [      
+        
         {
             "name": "Attach to Edge",
             "port": 44429,
@@ -21,7 +22,11 @@
             "request": "launch",
             "type": "msedge",
             "url": "https://localhost:7088",
-            "webRoot": "${workspaceFolder}/ClientApp"
+            "webRoot": "${workspaceFolder}/ClientApp",
+            "skipFiles": [
+                "${workspaceFolder}/ClientApp/node_modules/**/*.js",
+                "${workspaceFolder}/ClientApp/lib/**/*.js"
+              ]
         },
           
 

@@ -1,0 +1,27 @@
+<table class="table">
+  <thead>
+    <tr>
+      <th class="col-1">Id</th>
+      <th class="col-1">PortfolioId</th>
+      <th class="col-2">Symbol</th>
+      <th class="col-1">Units</th>
+      <th class="col-1">Price</th>
+      <th class="col-1">Type</th>
+      <th class="col-2">Date</th>
+      <th class="col-1">Modify</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let trade of tradeHistory">
+      <td>{{ trade.tradeHistoryId }}</td>
+      <td>{{ trade.portfolioId }}</td>
+      <td>{{ trade.symbol }}</td>
+      <td>{{ trade.units }}</td>
+      <td>{{ trade.price }}</td>
+      <td>{{ trade.type }}</td>
+      <td>{{ trade.createdDate }}</td>
+      <td><button class="btn btn-primary">Modify</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
