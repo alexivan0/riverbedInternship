@@ -6,10 +6,11 @@ const target = env.ASPNETCORE_HTTPS_PORT ? `https://localhost:${env.ASPNETCORE_H
 const PROXY_CONFIG = [
   {
     context: [
-      "/weatherforecast",
-      "/api/marketdata",
+      /*"/api/marketdata",*/
+      "/api/portfolios",
       "/api/assets",
-      "/api/TradeHistories",
+      "/api/tradehistories",
+      "/api/auth",
       "https://api.binance.com/api/v3/ticker/price/btcusdt"
     ],
     target: target,

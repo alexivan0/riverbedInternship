@@ -18,6 +18,7 @@ namespace PortfolioTracker.Models
 		[Column(TypeName = "money")]
 		public decimal Price { get; set; }
 
+		[Column(TypeName = "Date")]
 		public DateTime CreatedDate { get; set; }
 	}
 }
