@@ -16,7 +16,7 @@
           <tr *ngFor="let trade of tradeHistory">
             <td>{{ trade.symbol }}</td>
             <td>{{ trade.units }}</td>
-            <td>{{ trade.price }}</td>
+            <td>{{ trade.price | currency}}</td>
             <td>{{ trade.type }}</td>
             <td>{{ trade.createdDate | date}}</td>
             <td><button class="btn btn-primary"
@@ -106,7 +106,8 @@
             <input type="date" id="dateEdit" #dateEdit class="ms-1" [value]="this.myDate">
           </p>
           <button type="submit" class="btn btn-primary mt-3">Modify Trade</button>
-          <button type="button" class="btn btn-danger mt-3 float-end" (click)="deleteTrade(+tradeHistoryId.value, this.portfolioId)">Delete Trade</button>
+          <button type="button" class="btn btn-danger mt-3 float-end"
+            (click)="deleteTrade(+tradeHistoryId.value, this.portfolioId)">Delete Trade</button>
         </form>
       </div>
     </div>

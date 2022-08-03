@@ -11,7 +11,6 @@ const PROXY_CONFIG = [
       "/api/assets",
       "/api/tradehistories",
       "/api/auth",
-      "https://api.binance.com/api/v3/ticker/price/btcusdt"
     ],
     target: target,
     secure: false,

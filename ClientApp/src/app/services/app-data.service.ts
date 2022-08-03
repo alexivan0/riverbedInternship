@@ -10,6 +10,8 @@ export class AppDataService {
   // token;
   // headers;
   portfolioId!: number;
+  assetsData
+  
 
   constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string, private jwtHelper: JwtHelperService) {
     // this.token = localStorage.getItem("jwt")!;
@@ -72,6 +74,10 @@ export class AppDataService {
     return this.http.delete<IAsset>(this.baseUrl + 'api/assets/' + assetId + "/portfolios/" + portfolioId)
   }
 
+  getAssetsPrice(url) {
+    return this.http.get<IAssetLivePrices[]>(url)
+  }
+
   //Portfolio
 
   // GetPortfolio() {
@@ -121,6 +127,7 @@ export class AppDataService {
       console.log(this.portfolioId);
     }, error => console.log(error))
   }
+  
 
 }
 
@@ -131,6 +138,7 @@ export interface IAsset {
   assetId: number,
   symbol: string,
   units: number
+  livePrice: number;
 }
 
 export interface ITradeHistory {
@@ -147,4 +155,9 @@ export interface IPortfolio {
   portfolioId: number,
   userId: number,
   tradeBalance: number
+}
+
+export interface IAssetLivePrices {
+  symbol: string,
+  price: number,
 }

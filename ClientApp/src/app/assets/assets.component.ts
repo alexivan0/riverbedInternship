@@ -19,24 +19,32 @@ export class AssetsComponent implements OnInit {
     portfolioId: -1,
     assetId: -1,
     units: -1,
-    symbol: ''
+    symbol: '',
+    livePrice: -1
   }
+  livePricesUrl!: string;
+  total!: number;
 
   formGroup!: FormGroup;
 
 
   constructor(private service: AppDataService, private fb: FormBuilder) {
-   }
+  }
 
   ngOnInit(): void {
     this.initForm();
     this.getSymbols();
     this.getAllAssets(this.portfolioId);
+    // this.getAssetsPrice();
   }
 
 
 
   ngAfterViewInit() {
+    // this.getAssetListPrices()
+    // this.getAssetsPrice();
+    // setInterval(() => this.getAssetsPrice(), 5000)
+
   }
 
   ngOnChanges() {
@@ -71,7 +79,9 @@ export class AssetsComponent implements OnInit {
 
   getAllAssets(pid) {
     this.service.getAllAssets(pid).subscribe(result => {
+      result.sort((a, b) => a.symbol.localeCompare(b.symbol))
       this.assetList = result;
+      this.getAssetListPricesUrl();
       console.log(this.assetList);
     }, error => console.log(error));
   }
@@ -103,6 +113,56 @@ export class AssetsComponent implements OnInit {
       this.getAllAssets(this.portfolioId);
     }, error => console.log(error))
     this.toggleShowUpdateAsset = false;
+  }
+
+  getAssetListPricesUrl() {
+    this.livePricesUrl = "https://api.binance.com/api/v3/ticker/price?symbols=[";
+    this.assetList.forEach(element => {
+      this.livePricesUrl = this.livePricesUrl + '"' + element.symbol + "USDT" + '"';
+      if (this.assetList[this.assetList.length - 1] == element) {
+        this.livePricesUrl = this.livePricesUrl + "]"
+      }
+      else {
+        this.livePricesUrl = this.livePricesUrl + ","
+      }
+    });
+    console.log(this.livePricesUrl);
+  }
+
+
+  async getAssetsPrice() {
+    while (true) {
+      this.service.getAssetsPrice(this.livePricesUrl).subscribe(result => {
+        result.forEach((element, index) => {
+          result[index].symbol = element.symbol.substring(0, element.symbol.length - 4);
+        });
+        result.sort((a, b) => a.symbol.localeCompare(b.symbol));
+        for (let i = 0; i < this.assetList.length; i++) {
+          this.assetList[i].livePrice = result[i].price;
+        }
+        this.calculateTotal();
+        // this.assetList.forEach(assetElement => {
+        //   result.forEach(resultElement => {
+        //     if (assetElement.symbol == resultElement.symbol) {
+        //       assetElement.livePrice = resultElement.price;
+        //       return;
+        //     }
+        //   });
+        // });
+      })
+      await this.delay(5000)
+    }
+  }
+
+  calculateTotal() {
+    this.total = 0;
+    this.assetList.forEach(element => {
+      this.total = Number(this.total) + Number(element.livePrice);
+    });
+  }
+
+  delay(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms))
   }
 
 
