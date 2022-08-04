@@ -20,10 +20,11 @@ export class AssetsComponent implements OnInit {
     assetId: -1,
     units: -1,
     symbol: '',
-    livePrice: -1
+    livePrice: -1,
+    liveTotal: -1
   }
   livePricesUrl!: string;
-  total!: number;
+  totalBalance!: number;
 
   formGroup!: FormGroup;
 
@@ -139,6 +140,7 @@ export class AssetsComponent implements OnInit {
         result.sort((a, b) => a.symbol.localeCompare(b.symbol));
         for (let i = 0; i < this.assetList.length; i++) {
           this.assetList[i].livePrice = result[i].price;
+          this.assetList[i].liveTotal = this.assetList[i].units * this.assetList[i].livePrice; 
         }
         this.calculateTotal();
         // this.assetList.forEach(assetElement => {
@@ -155,9 +157,9 @@ export class AssetsComponent implements OnInit {
   }
 
   calculateTotal() {
-    this.total = 0;
+    this.totalBalance = 0;
     this.assetList.forEach(element => {
-      this.total = Number(this.total) + Number(element.livePrice);
+      this.totalBalance = Number(this.totalBalance) + Number(element.liveTotal);
     });
   }
 

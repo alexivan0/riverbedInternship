@@ -139,6 +139,7 @@ export interface IAsset {
   symbol: string,
   units: number
   livePrice: number;
+  liveTotal: number;
 }
 
 export interface ITradeHistory {
@@ -148,7 +149,8 @@ export interface ITradeHistory {
   units: number,
   price: number,
   type: string,
-  createdDate: string
+  createdDate: string,
+  pnl: number
 }
 
 export interface IPortfolio {

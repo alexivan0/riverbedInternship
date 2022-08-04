@@ -7,22 +7,26 @@
             <th class="col-2">Symbol</th>
             <th class="col-1">Units</th>
             <th class="col-1">Price</th>
+            <th class="col-1">Total</th>
             <th class="col-1">Type</th>
             <th class="col-2">Date</th>
+            <th class="col-1">PNL</th>
             <th class="col-1">Modify</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let trade of tradeHistory">
-            <td>{{ trade.symbol }}</td>
-            <td>{{ trade.units }}</td>
-            <td>{{ trade.price | currency}}</td>
-            <td>{{ trade.type }}</td>
-            <td>{{ trade.createdDate | date}}</td>
-            <td><button class="btn btn-primary"
-                (click)="toggleUpdateTrade(trade.tradeHistoryId, trade.portfolioId, trade.symbol, trade.units, trade.price, trade.type, trade.createdDate)">Modify</button>
-            </td>
-          </tr>
+            <tr *ngFor="let trade of tradeHistory">
+              <td>{{ trade.symbol }}</td>
+              <td>{{ trade.units }}</td>
+              <td>{{ trade.price | currency}}</td>
+              <td>{{ (trade.units * trade.price) | currency}}</td>
+              <td>{{ trade.type }}</td>
+              <td>{{ trade.createdDate | date}}</td>
+              <td></td>
+              <td><button class="btn btn-primary"
+                  (click)="toggleUpdateTrade(trade.tradeHistoryId, trade.portfolioId, trade.symbol, trade.units, trade.price, trade.type, trade.createdDate)">Modify</button>
+              </td>
+            </tr>
         </tbody>
       </table>
     </div>
@@ -113,3 +117,6 @@
     </div>
   </div>
 </div>
+
+<button class="btn btn-primary" (click)="groupTrades()">Group Trades</button>
+<button class="btn btn-primary" (click)="getPnl()">Get Pnl</button>

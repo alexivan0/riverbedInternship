@@ -14,6 +14,8 @@ export class TradeTrackerComponent implements OnInit {
   filteredSymbols!: string[];
   portfolioId: number = this.service.portfolioId
   tradeHistory!: ITradeHistory[];
+  groupedTrades;
+  lastPnl!: number;
   updatePortfolio: boolean = true;
   myDate = new Date().toLocaleDateString();
   toggleShowUpdateTrade: boolean = false;
@@ -24,7 +26,8 @@ export class TradeTrackerComponent implements OnInit {
     units: -1,
     price: -1,
     type: "",
-    createdDate: ""
+    createdDate: "",
+    pnl: -1
   }
 
   formGroup!: FormGroup;
@@ -85,6 +88,7 @@ export class TradeTrackerComponent implements OnInit {
   getAllTrades(pid) {
     this.service.getAllTrades(pid).subscribe(result => {
       this.tradeHistory = result;
+      this.groupTrades();
       console.log(this.tradeHistory);
     }, error => console.log(error));
   }
@@ -96,7 +100,7 @@ export class TradeTrackerComponent implements OnInit {
   }
 
   updateTrade(tradeHistoryId: number, pid: number, symbol: string, units: number, price: number, type: string, date: string) {
-    this.service.updateTrade(tradeHistoryId , pid, symbol, units, price, type, date).subscribe(result => {
+    this.service.updateTrade(tradeHistoryId, pid, symbol, units, price, type, date).subscribe(result => {
       this.getAllTrades(this.portfolioId)
     }, error => console.log(error))
     this.toggleShowUpdateTrade = false;
@@ -110,11 +114,44 @@ export class TradeTrackerComponent implements OnInit {
     })
   }
 
+  groupTrades() {
+    this.groupedTrades = this.tradeHistory.reduce((groupedArray, trade) => {
+      const symbol = trade.symbol;
+      if (groupedArray[symbol] == null)
+        groupedArray[symbol] = [];
+      groupedArray[symbol].push(trade);
+      return groupedArray;
+    }, {})
+    console.log(this.groupedTrades);
+  }
+
   deleteTrade(tradeHistoryId: number, pid: number) {
     this.service.deleteTrade(tradeHistoryId, pid).subscribe(result => {
       this.getAllTrades(this.portfolioId);
     }, error => console.log(error))
     this.toggleShowUpdateTrade = false;
+  }
+
+  getPnl() {
+    // for (let i = 0; i < this.groupedTrades.length; i++) {
+    //   for (let j = 0; j < this.groupedTrades[i].length; j++) {
+    //     if (j > 0 && this.groupedTrades[i][j].type == "Sell")
+    //       this.groupedTrades[i][j].pnl = (this.groupedTrades[i][j].price - this.groupedTrades[i][j].price) * -1;
+    //   }
+    // }
+
+    // this.groupedTrades.forEach(group => {
+    //   for (let i = 0; i < group.length; i++) {
+    //     if(i > 0 && group[i].type == "Sell")
+    //       group[i].pnl = (group[i-1].price - group[i].price) * -1;
+    //   }
+    // });
+    
+    // var flattened = [].concat.apply([],this.groupedTrades);
+    // const result = this.groupedTrades.reduce((accumulator, value) => accumulator.concat(value), []);
+    // var result = Object.keys(this.groupedTrades).map((key) => [Number(key), this.groupedTrades[key]])
+    var arr = Object.values(this.groupedTrades)
+    console.log("grouped trades with pnl:", arr);
   }
 
 }
