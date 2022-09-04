@@ -21,8 +21,18 @@
             <td>{{ asset.units }}</td>
             <td>{{ asset.livePrice | currency }}</td>
             <td>{{ asset.liveTotal | currency }}</td>
-            <td><button class="btn btn-primary"
+            <!-- <td><button class="btn btn-primary"
                 (click)="toggleUpdateAsset(asset.portfolioId, asset.assetId, asset.units, asset.symbol)">Modify</button>
+            </td> -->
+            <!-- <td>
+              <span class="material-symbols-outlined">
+                edit
+              </span>
+            </td> -->
+            <td>
+              <mat-icon fontSet="material-icons-outlined"
+                (click)="toggleUpdateAsset(asset.portfolioId, asset.assetId, asset.units, asset.symbol)" #editIcon>
+                edit</mat-icon>
             </td>
           </tr>
         </tbody>
@@ -33,7 +43,8 @@
       <div class="mb-5">
         <form [formGroup]="formGroup" (ngSubmit)="postAsset(this.portfolioId, symbol.value, +units.value)">
           <mat-form-field>
-            <input formControlName="symbol" matInput type="text" [matAutocomplete]="auto" #symbol class="form-control" placeholder="Symbol">
+            <input formControlName="symbol" matInput type="text" [matAutocomplete]="auto" #symbol class="form-control"
+              placeholder="Symbol">
             <mat-autocomplete #auto="matAutocomplete">
               <mat-option *ngFor="let symbol of filteredSymbols" [value]="symbol">
                 {{symbol}}
@@ -55,8 +66,8 @@
           </div>
           <div>
             <label for="portfolioId" class="form-label" hidden>Portfolio Id</label>
-            <input type="number" #localportfolioId class="form-control" id="portfolioId" [ngModel]="updatedAsset.portfolioId"
-              name="portfolioId" disabled hidden>
+            <input type="number" #localportfolioId class="form-control" id="portfolioId"
+              [ngModel]="updatedAsset.portfolioId" name="portfolioId" disabled hidden>
           </div>
           <div>
             <label for="symbol" class="form-label">Symbol</label>
@@ -68,7 +79,8 @@
             <input type="number" #units class="form-control" id="units" [ngModel]="updatedAsset.units" name="units">
           </div>
           <button type="submit" class="btn btn-primary mt-3">Modify Asset</button>
-          <button type="button" class="btn btn-danger mt-3 float-end" (click)="deleteAsset(this.portfolioId, +assetId.value)">Delete Asset</button>
+          <button type="button" class="btn btn-danger mt-3 float-end"
+            (click)="deleteAsset(this.portfolioId, +assetId.value)">Delete Asset</button>
         </form>
       </div>
     </div>
@@ -77,11 +89,11 @@
 </div>
 
 <!-- <button class="btn btn-primary" (click)="getCurrentUserId()">get claims</button> -->
-<button class="btn btn-primary" (click)="getAllAssets(this.portfolioId)" *ngIf="!assetList">get assets</button>
+<!-- <button class="btn btn-primary" (click)="getAllAssets(this.portfolioId)" *ngIf="!assetList">get assets</button> -->
 
-<button class="btn btn-primary" (click)="getAssetListPricesUrl()">get assets url</button>
-<button class="btn btn-primary" (click)="getAssetsPrice()">get assets json</button>
+<!-- <button class="btn btn-primary" (click)="getAssetListPricesUrl()">get assets url</button>
+<button class="btn btn-primary" (click)="getAssetsPrice()">get assets json</button> -->
 
 <div class="row mt-3">
-  <h1>Total: {{totalBalance | currency}} </h1> 
+  <h1>Total: {{totalBalance | currency}} </h1>
 </div>

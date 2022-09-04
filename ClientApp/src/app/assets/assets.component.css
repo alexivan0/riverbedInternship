@@ -1,0 +1,17 @@
+/* #editIcon:hover {
+  color: rgb(13, 0, 199);
+  background: blue;
+}
+
+i.icon-blue {
+  color: blue;
+} */
+
+mat-icon:hover {
+  color: rgb(13, 0, 199);
+}
+
+/* mat-list-item:hover mat-icon {
+  color: rgb(13, 0, 199);
+  background: blue;
+} */

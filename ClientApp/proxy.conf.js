@@ -11,6 +11,7 @@ const PROXY_CONFIG = [
       "/api/assets",
       "/api/tradehistories",
       "/api/auth",
+      "/api/users"
     ],
     target: target,
     secure: false,

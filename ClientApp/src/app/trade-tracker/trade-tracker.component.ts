@@ -14,7 +14,6 @@ export class TradeTrackerComponent implements OnInit {
   filteredSymbols!: string[];
   portfolioId: number = this.service.portfolioId
   tradeHistory!: ITradeHistory[];
-  groupedTrades;
   lastPnl!: number;
   updatePortfolio: boolean = true;
   myDate = new Date().toLocaleDateString();
@@ -25,9 +24,13 @@ export class TradeTrackerComponent implements OnInit {
     symbol: "",
     units: -1,
     price: -1,
+    total: -1,
     type: "",
     createdDate: "",
-    pnl: -1
+    accumulated: -1,
+    totalUnits: -1,
+    averageBuy: -1,
+    pnl: -1,
   }
 
   formGroup!: FormGroup;
@@ -88,7 +91,8 @@ export class TradeTrackerComponent implements OnInit {
   getAllTrades(pid) {
     this.service.getAllTrades(pid).subscribe(result => {
       this.tradeHistory = result;
-      this.groupTrades();
+      this.tradeHistory.sort((a, b) => a.symbol.localeCompare(b.symbol));
+      this.getPnl();
       console.log(this.tradeHistory);
     }, error => console.log(error));
   }
@@ -114,16 +118,6 @@ export class TradeTrackerComponent implements OnInit {
     })
   }
 
-  groupTrades() {
-    this.groupedTrades = this.tradeHistory.reduce((groupedArray, trade) => {
-      const symbol = trade.symbol;
-      if (groupedArray[symbol] == null)
-        groupedArray[symbol] = [];
-      groupedArray[symbol].push(trade);
-      return groupedArray;
-    }, {})
-    console.log(this.groupedTrades);
-  }
 
   deleteTrade(tradeHistoryId: number, pid: number) {
     this.service.deleteTrade(tradeHistoryId, pid).subscribe(result => {
@@ -133,25 +127,45 @@ export class TradeTrackerComponent implements OnInit {
   }
 
   getPnl() {
-    // for (let i = 0; i < this.groupedTrades.length; i++) {
-    //   for (let j = 0; j < this.groupedTrades[i].length; j++) {
-    //     if (j > 0 && this.groupedTrades[i][j].type == "Sell")
-    //       this.groupedTrades[i][j].pnl = (this.groupedTrades[i][j].price - this.groupedTrades[i][j].price) * -1;
-    //   }
-    // }
-
-    // this.groupedTrades.forEach(group => {
-    //   for (let i = 0; i < group.length; i++) {
-    //     if(i > 0 && group[i].type == "Sell")
-    //       group[i].pnl = (group[i-1].price - group[i].price) * -1;
-    //   }
-    // });
-    
-    // var flattened = [].concat.apply([],this.groupedTrades);
-    // const result = this.groupedTrades.reduce((accumulator, value) => accumulator.concat(value), []);
-    // var result = Object.keys(this.groupedTrades).map((key) => [Number(key), this.groupedTrades[key]])
-    var arr = Object.values(this.groupedTrades)
-    console.log("grouped trades with pnl:", arr);
+    let counter = 0;
+    let avgBuyPrice = 0;
+    let totalUnits = 0;
+    let totalAccumulated = 0;
+    let totalTradePrice = 0;
+    for (let i = 0; i < this.tradeHistory.length; i++) {
+      if (i == 0 || i == this.tradeHistory.length - 1 || this.tradeHistory[i].symbol != this.tradeHistory[i - 1].symbol) {
+        counter = 1;
+        avgBuyPrice = this.tradeHistory[i].price;
+        this.tradeHistory[i].averageBuy = avgBuyPrice;
+        totalUnits = this.tradeHistory[i].units;
+        this.tradeHistory[i].totalUnits = totalUnits;
+        totalTradePrice = this.tradeHistory[i].price * this.tradeHistory[i].units;
+        this.tradeHistory[i].total = totalTradePrice;
+        totalAccumulated = totalTradePrice;
+        this.tradeHistory[i].accumulated = totalAccumulated;
+      }
+      else {
+        counter = counter + 1;
+        totalTradePrice = this.tradeHistory[i].price * this.tradeHistory[i].units;
+        this.tradeHistory[i].total = totalTradePrice;
+        if (this.tradeHistory[i].type == "Buy") {
+          avgBuyPrice = (avgBuyPrice + this.tradeHistory[i].price) / counter;
+          this.tradeHistory[i].averageBuy = avgBuyPrice;
+          totalUnits = totalUnits + this.tradeHistory[i].units;
+          this.tradeHistory[i].totalUnits = totalUnits;
+          totalAccumulated = totalAccumulated + totalTradePrice;
+          this.tradeHistory[i].accumulated = totalAccumulated;
+        }
+        else if (this.tradeHistory[i].type == "Sell") {
+          this.tradeHistory[i].pnl = (this.tradeHistory[i].price - avgBuyPrice) * this.tradeHistory[i].units;
+          this.tradeHistory[i].averageBuy = avgBuyPrice;
+          totalUnits = totalUnits - this.tradeHistory[i].units;
+          this.tradeHistory[i].totalUnits = totalUnits;
+          totalAccumulated = totalAccumulated - totalTradePrice;
+          this.tradeHistory[i].accumulated = totalAccumulated;
+        }
+      }
+    }
   }
 
 }

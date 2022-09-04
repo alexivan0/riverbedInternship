@@ -4,11 +4,22 @@
         "name": "Core & Angular",
         "configurations": [
             ".NET Core Launch (web)",
-            "Attach to Edge"         
+            "Attach to Edge"
         ]
     }],
-    "configurations": [      
-        
+    "configurations": [{
+            "name": "Launch Chrome",
+            "request": "launch",
+            "type": "chrome",
+            "url": "https://localhost:7088",
+            "webRoot": "${workspaceFolder}/ClientApp",
+            "skipFiles": [
+                "${workspaceFolder}/ClientApp/<node_internals>/**",
+                "${workspaceFolder}/ClientApp/node_modules/**"
+            ]
+        },
+
+
         {
             "name": "Attach to Edge",
             "port": 44429,
@@ -16,7 +27,7 @@
             "type": "msedge",
             "webRoot": "${workspaceFolder}/ClientApp"
         },
-        
+
         {
             "name": "Launch Edge",
             "request": "launch",
@@ -24,11 +35,14 @@
             "url": "https://localhost:7088",
             "webRoot": "${workspaceFolder}/ClientApp",
             "skipFiles": [
-                "${workspaceFolder}/ClientApp/node_modules/**/*.js",
-                "${workspaceFolder}/ClientApp/lib/**/*.js"
-              ]
+                // "${workspaceFolder}/ClientApp/node_modules/**/*.js",
+                // "${workspaceFolder}/ClientApp/lib/**/*.js"
+                "src/test.ts",
+                "**/*.spec.ts",
+                "**/*.stub.ts"
+            ]
         },
-          
+
 
         {
             // Use IntelliSense to find out which attributes exist for C# debugging
@@ -62,7 +76,7 @@
         },
 
 
-        
+
 
 
         // {
@@ -71,10 +85,10 @@
         //     "request": "launch",
         //     "preLaunchTask": "npm: start",
         //     "url": "https://localhost:4200/#",
-        
+
         //     // Note: The ./client directory
         //     "webRoot": "${workspaceFolder}/client",
-            
+
         //     "sourceMaps": true,
         //     "sourceMapPathOverrides": {
         //       "webpack:/*": "${webRoot}/*",
@@ -124,7 +138,7 @@
         //     "type": "coreclr",
         //     "request": "attach",
         // },
-        
+
         // ],
         // "compounds": [
         // {

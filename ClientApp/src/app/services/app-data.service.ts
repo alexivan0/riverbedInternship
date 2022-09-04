@@ -1,32 +1,65 @@
 import { Inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { map } from 'rxjs';
+import { BehaviorSubject, map, Observable } from 'rxjs';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { Router, Event, NavigationStart, NavigationEnd, NavigationError } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AppDataService {
-  // token;
-  // headers;
-  portfolioId!: number;
-  assetsData
-  
 
-  constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string, private jwtHelper: JwtHelperService) {
-    // this.token = localStorage.getItem("jwt")!;
-    // this.headers = new HttpHeaders().set("Authorization", 'Bearer ' + this.token);
-    this.getCurrentUserId()
+  // currentRoute!: string;
+  portfolioId!: number;
+  assetsData: any;
+  assetList!: IAsset[];
+  livePricesUrl!: string;
+  totalBalance!: number;
+
+  private sharedArray: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+  private sharedTotal: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+  sharedArray$: Observable<any> = this.sharedArray.asObservable();
+  sharedTotal$: Observable<any> = this.sharedTotal.asObservable();
+
+
+  constructor(private http: HttpClient, @Inject('BASE_URL') private baseUrl: string, private jwtHelper: JwtHelperService, private router: Router) {
+    console.log("service initialized")
+    this.decodeJwt();
+    this.getLivePrices(this.portfolioId);
+    console.log("service", this.assetList)
+    // this.currentRoute = "";
+    // this.router.events.subscribe((event: Event) => {
+    //   if (event instanceof NavigationStart) {
+    //     // Show loading indicator
+    //     console.log('Route change detected');
+    //   }
+
+    //   if (event instanceof NavigationEnd) {
+    //     this.currentRoute = event.url;
+    //     console.log(event);
+    //   }
+
+    //   if (event instanceof NavigationError) {
+    //     // Hide loading indicator
+
+    //     // Present error to user
+    //     console.log(event.error);
+    //   }
+    // });
   }
-   
-  
+
+  // ngOnInit(): void {
+
+  // }
+
+
 
   //Authentication
 
   isUserAuthenticated() {
     const token: string = localStorage.getItem("jwt")!;
 
-    if(token && !this.jwtHelper.isTokenExpired(token))
+    if (token && !this.jwtHelper.isTokenExpired(token))
       return true;
     else
       return false;
@@ -34,6 +67,18 @@ export class AppDataService {
 
   logOut() {
     localStorage.removeItem("jwt");
+  }
+
+  decodeJwt() {
+    const token = this.jwtHelper.decodeToken(localStorage.getItem("jwt") || "");
+    if (token != null) {
+      this.portfolioId = token.PortfolioId
+      console.log("decodejwt portfolioid", console.log(this.portfolioId))
+    }
+  }
+
+  reloadCurrentPage() {
+    window.location.reload();
   }
 
 
@@ -62,7 +107,7 @@ export class AppDataService {
   }
 
   updateAsset(portfolioId: number, assetId: number, symbol: string, units: number) {
-    return this.http.put<IAsset>(this.baseUrl + 'api/assets/' + assetId + "/portfolios/" + portfolioId , {
+    return this.http.put<IAsset>(this.baseUrl + 'api/assets/' + assetId + "/portfolios/" + portfolioId, {
       portfolioId: portfolioId,
       assetId: assetId,
       symbol: symbol,
@@ -118,16 +163,76 @@ export class AppDataService {
     return this.http.delete<ITradeHistory>(this.baseUrl + "api/tradehistories/" + tradeHistoryId + "/portfolios/" + pid)
   }
 
-  //Current User
+  //Live Prices Global Implementation
 
-  getCurrentUserId(){
-    this.http.get<IPortfolio>(this.baseUrl + "api/portfolios/currentuser").subscribe(result => {
-      this.portfolioId = result.portfolioId;
-      console.log("portfolioId from getCurrentUserId():");
-      console.log(this.portfolioId);
-    }, error => console.log(error))
+  getLivePrices(pid) {
+    this.getAllAssets(pid).subscribe(result => {
+      result.sort((a, b) => a.symbol.localeCompare(b.symbol))
+      this.assetList = result;
+      this.getAssetListPricesUrl();
+      this.getAssetsLivePrice();
+      console.log("getliveprices", this.assetList);
+    }, error => console.log(error));
+
+    // this.http.get<IAsset[]>(this.baseUrl + 'api/assets/portfolios/' + pid).subscribe(result => {
+    //   result.sort((a, b) => a.symbol.localeCompare(b.symbol))
+    //   this.assetList = result;
+    //   this.getAssetListPricesUrl();
+    //   this.getAssetsLivePrice();
+    //   console.log(this.assetList);
+    // }, error => console.log(error));
   }
-  
+
+  getAssetListPricesUrl() {
+    this.livePricesUrl = "https://api.binance.com/api/v3/ticker/price?symbols=[";
+    this.assetList.forEach(element => {
+      this.livePricesUrl = this.livePricesUrl + '"' + element.symbol + "USDT" + '"';
+      if (this.assetList[this.assetList.length - 1] == element) {
+        this.livePricesUrl = this.livePricesUrl + "]"
+      }
+      else {
+        this.livePricesUrl = this.livePricesUrl + ","
+      }
+    });
+    console.log(this.livePricesUrl);
+  }
+
+  async getAssetsLivePrice() {
+    while (true) {
+      this.getAssetsPrice(this.livePricesUrl).subscribe(result => {
+        result.forEach((element, index) => {
+          result[index].symbol = element.symbol.substring(0, element.symbol.length - 4);
+        });
+        result.sort((a, b) => a.symbol.localeCompare(b.symbol));
+        this.assetList.sort((a, b) => a.symbol.localeCompare(b.symbol));
+        for (let i = 0; i < this.assetList.length; i++) {
+          this.assetList[i].livePrice = result[i].price;
+          this.assetList[i].liveTotal = this.assetList[i].units * this.assetList[i].livePrice;
+        }
+        this.calculateTotal();
+        this.setSharedArray(this.assetList);
+        this.setSharedTotal(this.totalBalance);
+      })
+      await new Promise(f => setTimeout(f, 5000));
+      console.log("assets live prices running");
+    }
+  }
+
+  calculateTotal() {
+    this.totalBalance = 0;
+    this.assetList.forEach(element => {
+      this.totalBalance = Number(this.totalBalance) + Number(element.liveTotal);
+    });
+  }
+
+  setSharedArray(sharedArray) {
+    this.sharedArray.next(sharedArray)
+  }
+  setSharedTotal(sharedTotal) {
+    this.sharedTotal.next(sharedTotal)
+  }
+
+
 
 }
 
@@ -148,8 +253,12 @@ export interface ITradeHistory {
   symbol: string,
   units: number,
   price: number,
+  total: number,
   type: string,
   createdDate: string,
+  accumulated: number,
+  totalUnits: number,
+  averageBuy: number;
   pnl: number
 }
 

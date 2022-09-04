@@ -42,10 +42,12 @@ namespace PortfolioTracker.Controllers
                 var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
                     _configuration.GetSection("AppSettings:Token").Value));
                 var signingCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
+                var portfolio = await _context.Portfolio.FirstOrDefaultAsync(p => p.UserId == checkUser.UserId);
 
                 List<Claim> claims = new()
                 {
                     new Claim("UserId" , checkUser.UserId.ToString()),
+                    new Claim("PortfolioId", portfolio.PortfolioId.ToString())
                 };
 
                 var tokenOptions = new JwtSecurityToken(

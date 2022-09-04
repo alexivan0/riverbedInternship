@@ -29,22 +29,22 @@ namespace PortfolioTracker.Controllers
             return await _context.Portfolio.ToListAsync();
         }
 
-        // GET: api/portfolios/currentuser
-        [HttpGet("currentuser")]
-        [Authorize]
-        public async Task<ActionResult<Portfolio>> GetPortfolio()
-         {
-            var userId = GetUserId();
+        // // GET: api/portfolios/currentuser
+        // [HttpGet("currentuser")]
+        // [Authorize]
+        // public async Task<ActionResult<Portfolio>> GetPortfolio()
+        // {
+        //     var userId = GetUserId();
 
-            var portfolio = await _context.Portfolio.FirstOrDefaultAsync(p => p.UserId == userId);
+        //     var portfolio = await _context.Portfolio.FirstOrDefaultAsync(p => p.UserId == userId);
 
-            if (portfolio == null)
-            {
-                return NotFound();
-            }
+        //     if (portfolio == null)
+        //     {
+        //         return NotFound();
+        //     }
 
-            return Ok(portfolio);
-        }
+        //     return Ok(portfolio);
+        // }
 
         // PUT: api/portfolios/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

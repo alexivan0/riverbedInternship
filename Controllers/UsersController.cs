@@ -15,10 +15,13 @@ namespace PortfolioTracker.Controllers
     public class UsersController : BaseController
     {
         private readonly PortfolioTrackerContext _context;
+        // private readonly PortfoliosController _portfoliosController;
 
         public UsersController(PortfolioTrackerContext context)
         {
             _context = context;
+            // _portfoliosController = portfoliosController;
+
         }
 
         // GET: api/Users
@@ -78,10 +81,32 @@ namespace PortfolioTracker.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(User user)
         {
-            _context.User.Add(user);
-            await _context.SaveChangesAsync();
+            var checkUser = await _context.User.FirstOrDefaultAsync(u => u.UserName == user.UserName);
+            if (checkUser != null)
+            {
+                return BadRequest("Invalid client request");
+            }
+            user.CreatedDate = DateTime.Now;
+            try
+            {
+                _context.User.Add(user);
+                await _context.SaveChangesAsync();
+                var updatedUser = await _context.User.FirstOrDefaultAsync(u => u.UserName == user.UserName);
+                Portfolio portfolio = new Portfolio()
+                {
+                    UserId = updatedUser.UserId,
+                    TradeBalance = 0,
+                };
+                // await _portfoliosController.PostPortfolio(portfolio);
+                _context.Portfolio.Add(portfolio);
+                await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetUser", new { id = user.UserId }, user);
+                return CreatedAtAction("GetUser", new { id = user.UserId }, user);
+            }
+            catch (System.Exception)
+            {
+                throw;
+            }
         }
 
         // DELETE: api/Users/5

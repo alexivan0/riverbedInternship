@@ -20,6 +20,10 @@ import { AuthGuardService } from './services/auth-guard.service';
 import { AssetsComponent } from './assets/assets.component';
 import { PortfolioComponent } from './portfolio/portfolio.component';
 import { DatePipe } from '@angular/common';
+import { SignUpComponent } from './sign-up/sign-up.component';
+import { AnalyticsComponent } from './analytics/analytics.component';
+import { MatIconModule } from '@angular/material/icon'
+import { NgChartsModule } from 'ng2-charts';
 
 export function tokenGetter() {
   return localStorage.getItem("jwt");
@@ -34,6 +38,8 @@ export function tokenGetter() {
     TradeTrackerComponent,
     LoginComponent,
     PortfolioComponent,
+    SignUpComponent,
+    AnalyticsComponent,
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -43,7 +49,9 @@ export function tokenGetter() {
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'portfolio', component: AssetsComponent, canActivate: [AuthGuardService] },
       { path: 'trade-tracker', component: TradeTrackerComponent, canActivate: [AuthGuardService] },
-      { path: 'login', component: LoginComponent }
+      { path: 'login', component: LoginComponent },
+      { path: 'signup', component: SignUpComponent },
+      { path: 'analytics', component: AnalyticsComponent, canActivate: [AuthGuardService] }
     ]),
     JwtModule.forRoot({
       config: {
@@ -56,9 +64,11 @@ export function tokenGetter() {
     MatAutocompleteModule,
     MatFormFieldModule,
     ReactiveFormsModule,
-    MatInputModule
+    MatInputModule,
+    MatIconModule,
+    NgChartsModule,
   ],
-  providers: [AppDataService,DatePipe],
+  providers: [AppDataService, DatePipe],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

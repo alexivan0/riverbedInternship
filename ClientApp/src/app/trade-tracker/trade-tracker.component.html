@@ -10,23 +10,29 @@
             <th class="col-1">Total</th>
             <th class="col-1">Type</th>
             <th class="col-2">Date</th>
+            <th class="col-1">Accumulated</th>
+            <th class="col-1">Average Buy</th>
             <th class="col-1">PNL</th>
             <th class="col-1">Modify</th>
           </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let trade of tradeHistory">
-              <td>{{ trade.symbol }}</td>
-              <td>{{ trade.units }}</td>
-              <td>{{ trade.price | currency}}</td>
-              <td>{{ (trade.units * trade.price) | currency}}</td>
-              <td>{{ trade.type }}</td>
-              <td>{{ trade.createdDate | date}}</td>
-              <td></td>
-              <td><button class="btn btn-primary"
-                  (click)="toggleUpdateTrade(trade.tradeHistoryId, trade.portfolioId, trade.symbol, trade.units, trade.price, trade.type, trade.createdDate)">Modify</button>
-              </td>
-            </tr>
+          <tr *ngFor="let trade of tradeHistory">
+            <td>{{ trade.symbol }}</td>
+            <td>{{ trade.units }}</td>
+            <td>{{ trade.price | currency}}</td>
+            <td>{{ trade.total | currency}}</td>
+            <td>{{ trade.type }}</td>
+            <td>{{ trade.createdDate | date}}</td>
+            <td>{{ trade.accumulated | currency}}</td>
+            <td>{{ trade.averageBuy | currency }}</td>
+            <td>{{ trade.pnl | currency}}</td>
+            <td>
+              <mat-icon fontSet="material-icons-outlined"
+                (click)="toggleUpdateTrade(trade.tradeHistoryId, trade.portfolioId, trade.symbol, trade.units, trade.price, trade.type, trade.createdDate)">
+                edit</mat-icon>
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -118,5 +124,5 @@
   </div>
 </div>
 
-<button class="btn btn-primary" (click)="groupTrades()">Group Trades</button>
-<button class="btn btn-primary" (click)="getPnl()">Get Pnl</button>
+<!-- <button class="btn btn-primary" (click)="groupTrades()">Group Trades</button> -->
+<!-- <button class="btn btn-primary" (click)="getPnl()">Get Pnl</button> -->

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { AppDataService } from '../services/app-data.service';
 
 @Component({
   selector: 'app-nav-menu',
@@ -7,6 +8,18 @@ import { Component } from '@angular/core';
 })
 export class NavMenuComponent {
   isExpanded = false;
+  isUserAuthenticated!: boolean;
+
+  constructor(private service: AppDataService) {
+    this.isUserAuthenticated = service.isUserAuthenticated();
+    console.log(this.isUserAuthenticated)
+  }
+
+  logOut(){
+    this.service.logOut();
+    this.service.reloadCurrentPage();
+  }
+
 
   collapse() {
     this.isExpanded = false;
@@ -15,4 +28,6 @@ export class NavMenuComponent {
   toggle() {
     this.isExpanded = !this.isExpanded;
   }
+
+
 }
