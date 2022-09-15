@@ -11,6 +11,10 @@ mat-icon:hover {
   color: rgb(13, 0, 199);
 }
 
+th{
+    font-weight: normal;
+}
+
 /* mat-list-item:hover mat-icon {
   color: rgb(13, 0, 199);
   background: blue;

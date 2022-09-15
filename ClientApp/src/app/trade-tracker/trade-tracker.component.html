@@ -1,32 +1,36 @@
 <div class="container">
   <div class="row">
-    <div class="col-9">
-      <table class="table">
+    <div class="col ">
+      <table class="table table-bordered rounded rounded-3 overflow-hidden table-striped">
         <thead>
           <tr>
-            <th class="col-2">Symbol</th>
-            <th class="col-1">Units</th>
-            <th class="col-1">Price</th>
-            <th class="col-1">Total</th>
-            <th class="col-1">Type</th>
-            <th class="col-2">Date</th>
-            <th class="col-1">Accumulated</th>
-            <th class="col-1">Average Buy</th>
-            <th class="col-1">PNL</th>
-            <th class="col-1">Modify</th>
+            <th class="col-2 text-primary bg-light">Date</th>
+            <th class="col text-primary bg-light">Type</th>
+            <th class="col text-primary bg-light">Symbol</th>
+            <th class="col text-primary bg-light">Units</th>
+            <th class="col text-primary bg-light">Price</th>
+            <th class="col text-primary bg-light">Trade Total Price</th>
+            <th class="col text-primary bg-light">Total Units</th>
+            <th class="col text-primary bg-light">Total Invested</th>
+            <th class="col text-primary bg-light">Average Buy Price</th>
+            <th class="col text-primary bg-light">Trade PNL</th>
+            <th class="col text-primary bg-light">Total PNL</th>
+            <th class="col text-primary bg-light">Modify</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let trade of tradeHistory">
+          <tr *ngFor="let trade of tradeHistory | slice: (page-1) * pageSize : page * pageSize">
+            <td>{{ trade.createdDate | date}}</td>
+            <td [ngStyle]="{'color': trade.type == 'Buy' ? 'green' : 'red'}">{{ trade.type }}</td>
             <td>{{ trade.symbol }}</td>
             <td>{{ trade.units }}</td>
             <td>{{ trade.price | currency}}</td>
             <td>{{ trade.total | currency}}</td>
-            <td>{{ trade.type }}</td>
-            <td>{{ trade.createdDate | date}}</td>
-            <td>{{ trade.accumulated | currency}}</td>
+            <td>{{ trade.totalUnits }}</td>
+            <td>{{ trade.totalInvested | currency}}</td>
             <td>{{ trade.averageBuy | currency }}</td>
-            <td>{{ trade.pnl | currency}}</td>
+            <td [ngStyle]="{'color': trade.pnl > 0 ? 'green' : 'red'}">{{ trade.pnl | currency}}</td>
+            <td [ngStyle]="{'color': trade.totalPnl > 0 ? 'green' : 'red'}">{{ trade.totalPnl | currency}}</td>
             <td>
               <mat-icon fontSet="material-icons-outlined"
                 (click)="toggleUpdateTrade(trade.tradeHistoryId, trade.portfolioId, trade.symbol, trade.units, trade.price, trade.type, trade.createdDate)">
@@ -35,6 +39,7 @@
           </tr>
         </tbody>
       </table>
+      <ngb-pagination [(page)]="page" [pageSize]="pageSize" [collectionSize]="tradeHistory.length" *ngIf="tradeHistory"></ngb-pagination>
     </div>
 
     <div class="col-3">
@@ -68,7 +73,7 @@
             <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked
               (click)="toggleUpdatePortfolio()">
           </div>
-          <button type="submit" class="btn btn-success mt-3">Add Trade</button>
+          <button type="submit" class="btn btn-outline-primary mt-3">Add Trade</button>
         </form>
       </div>
 
@@ -115,8 +120,8 @@
             <label for="dateEdit">Date: </label>
             <input type="date" id="dateEdit" #dateEdit class="ms-1" [value]="this.myDate">
           </p>
-          <button type="submit" class="btn btn-primary mt-3">Modify Trade</button>
-          <button type="button" class="btn btn-danger mt-3 float-end"
+          <button type="submit" class="btn btn-outline-success mt-3">Modify Trade</button>
+          <button type="button" class="btn btn-outline-danger mt-3 float-end"
             (click)="deleteTrade(+tradeHistoryId.value, this.portfolioId)">Delete Trade</button>
         </form>
       </div>

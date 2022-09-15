@@ -1,11 +1,14 @@
-#divChart1{
-    display: block;
-    width: 600px;
-    height: 600px;
-}
-
-/* #divChart2{
-    display: block;
-    width: 400px;
-    height: 400px;
+/* #divChart1 {
+  width: 400px;
+  height: 400px;
 } */
+
+/* #divChart2 {
+  width: 400px;
+  height: 400px;
+} */
+
+.linecharts {
+  width: 400px;
+  height: 400px;
+}

@@ -1,26 +1,27 @@
 <div class="container" *ngIf="assetList">
   <div class="row">
     <div class="col-9">
-      <table class="table">
+      <!-- <table class="table table-striped table-primary rounded overflow-hidden"> -->
+      <table class="table table-bordered rounded rounded-3 overflow-hidden table-striped">
         <thead>
           <tr>
-            <th class="col-1">Id</th>
-            <th class="col-1">PortfolioId</th>
-            <th class="col-2">Symbol</th>
-            <th class="col-1">Units</th>
-            <th class="col-1">Price</th>
-            <th class="col-1">Total</th>
-            <th class="col-1">Modify</th>
+            <th class="col text-primary bg-light">Symbol</th>
+            <th class="col text-primary bg-light">Units</th>
+            <th class="col text-primary bg-light">Price</th>
+            <th class="col text-primary bg-light">Total</th>
+            <th class="col text-primary bg-light">24h Price Change</th>
+            <th class="col text-primary bg-light">Modify</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let asset of assetList">
-            <td>{{ asset.assetId }}</td>
-            <td>{{ asset.portfolioId }}</td>
+          <tr *ngFor="let asset of assetList | slice: (page-1) * pageSize : page * pageSize">
+            <!-- <td>{{ asset.assetId }}</td>
+            <td>{{ asset.portfolioId }}</td> -->
             <td>{{ asset.symbol }}</td>
             <td>{{ asset.units }}</td>
             <td>{{ asset.livePrice | currency }}</td>
             <td>{{ asset.liveTotal | currency }}</td>
+            <td [ngStyle]="{'color': asset.dailyChange > 0 ? 'green' : 'red' }">{{asset.dailyChange}}%</td>
             <!-- <td><button class="btn btn-primary"
                 (click)="toggleUpdateAsset(asset.portfolioId, asset.assetId, asset.units, asset.symbol)">Modify</button>
             </td> -->
@@ -36,10 +37,14 @@
             </td>
           </tr>
         </tbody>
+        <ngb-pagination [(page)]="page" [pageSize]="pageSize" [collectionSize]="assetList.length"></ngb-pagination>
       </table>
+      <div class="row mt-3 text-center" *ngIf="assetList">
+        <h1 class="text-primary">Total: {{totalBalance | currency}} </h1>
+      </div>
     </div>
 
-    <div class="col-3">
+    <div class="col">
       <div class="mb-5">
         <form [formGroup]="formGroup" (ngSubmit)="postAsset(this.portfolioId, symbol.value, +units.value)">
           <mat-form-field>
@@ -52,7 +57,7 @@
             </mat-autocomplete>
           </mat-form-field>
           <input type="number" class="form-control" #units min="0" placeholder="Units">
-          <button type="submit" class="btn btn-success mt-3">Add Asset</button>
+          <button type="submit" class="btn btn-outline-primary mt-3">Add Asset</button>
         </form>
       </div>
 
@@ -78,8 +83,8 @@
             <label for="units" class="form-label">Units</label>
             <input type="number" #units class="form-control" id="units" [ngModel]="updatedAsset.units" name="units">
           </div>
-          <button type="submit" class="btn btn-primary mt-3">Modify Asset</button>
-          <button type="button" class="btn btn-danger mt-3 float-end"
+          <button type="submit" class="btn btn-outline-success mt-3">Modify Asset</button>
+          <button type="button" class="btn btn-outline-danger mt-3 float-end"
             (click)="deleteAsset(this.portfolioId, +assetId.value)">Delete Asset</button>
         </form>
       </div>
@@ -93,7 +98,3 @@
 
 <!-- <button class="btn btn-primary" (click)="getAssetListPricesUrl()">get assets url</button>
 <button class="btn btn-primary" (click)="getAssetsPrice()">get assets json</button> -->
-
-<div class="row mt-3">
-  <h1>Total: {{totalBalance | currency}} </h1>
-</div>

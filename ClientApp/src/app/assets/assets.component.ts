@@ -24,10 +24,14 @@ export class AssetsComponent implements OnInit {
     units: -1,
     symbol: '',
     livePrice: -1,
-    liveTotal: -1
+    liveTotal: -1,
+    dailyChange: -999
   }
   formGroup!: FormGroup;
-  subscription
+  subscription1
+  subscription2
+  public page = 1
+  public pageSize = 10
 
 
 
@@ -38,20 +42,18 @@ export class AssetsComponent implements OnInit {
   ngOnInit(): void {
     this.initForm();
     this.getSymbols();
-    this.subscription = this.service.sharedArray$.subscribe(result => {
-      // if (result != null) {
-      //   result.sort((a, b) => a.symbol.localeCompare(b.symbol));
-      // }
+    this.subscription1 = this.service.sharedArray$.subscribe(result => {
+      result.sort((a, b) => a.symbol.localeCompare(b.symbol));
       this.assetList = result;
-      console.log("asset list behavior subject")
     })
-    this.service.sharedTotal$.subscribe(result => {
+    this.subscription2 = this.service.sharedTotal$.subscribe(result => {
       this.totalBalance = result;
     })
   }
 
   ngOnDestroy() {
-    this.subscription.unsubscribe()
+    this.subscription1.unsubscribe()
+    this.subscription2.unsubscribe()
   }
 
 
@@ -88,7 +90,7 @@ export class AssetsComponent implements OnInit {
     this.service.getAllAssets(pid).subscribe(result => {
       result.sort((a, b) => a.symbol.localeCompare(b.symbol))
       this.assetList = result;
-      console.log(this.assetList);
+      // console.log(this.assetList);
     }, error => console.log(error));
   }
 

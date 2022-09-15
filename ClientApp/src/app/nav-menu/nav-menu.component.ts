@@ -12,7 +12,7 @@ export class NavMenuComponent {
 
   constructor(private service: AppDataService) {
     this.isUserAuthenticated = service.isUserAuthenticated();
-    console.log(this.isUserAuthenticated)
+    // console.log(this.isUserAuthenticated)
   }
 
   logOut(){

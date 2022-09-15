@@ -15,7 +15,10 @@
             "webRoot": "${workspaceFolder}/ClientApp",
             "skipFiles": [
                 "${workspaceFolder}/ClientApp/<node_internals>/**",
-                "${workspaceFolder}/ClientApp/node_modules/**"
+                "${workspaceFolder}/ClientApp/node_modules/**",
+                "${workspaceFolder}/ClientApp/src/app/home/**",
+                "${workspaceFolder}/ClientApp/src/app/nav-menu/**",
+                "${workspaceFolder}/ClientApp/src/app/app.component.ts",
             ]
         },
 

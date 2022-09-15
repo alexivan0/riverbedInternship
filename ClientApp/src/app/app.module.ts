@@ -24,6 +24,9 @@ import { SignUpComponent } from './sign-up/sign-up.component';
 import { AnalyticsComponent } from './analytics/analytics.component';
 import { MatIconModule } from '@angular/material/icon'
 import { NgChartsModule } from 'ng2-charts';
+import { MatCardModule } from '@angular/material/card'
+import { MatPaginatorModule } from '@angular/material/paginator'
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 export function tokenGetter() {
   return localStorage.getItem("jwt");
@@ -46,7 +49,7 @@ export function tokenGetter() {
     HttpClientModule,
     FormsModule,
     RouterModule.forRoot([
-      { path: '', component: HomeComponent, pathMatch: 'full' },
+      { path: '', component: HomeComponent, pathMatch: 'full', canActivate: [AuthGuardService] },
       { path: 'portfolio', component: AssetsComponent, canActivate: [AuthGuardService] },
       { path: 'trade-tracker', component: TradeTrackerComponent, canActivate: [AuthGuardService] },
       { path: 'login', component: LoginComponent },
@@ -67,6 +70,9 @@ export function tokenGetter() {
     MatInputModule,
     MatIconModule,
     NgChartsModule,
+    MatCardModule,
+    MatPaginatorModule,
+    NgbModule
   ],
   providers: [AppDataService, DatePipe],
   bootstrap: [AppComponent]

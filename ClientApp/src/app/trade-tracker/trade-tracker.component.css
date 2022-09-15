@@ -1,3 +1,7 @@
 mat-icon:hover {
     color: rgb(13, 0, 199);
 }
+
+th{
+    font-weight: normal;
+}

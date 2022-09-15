@@ -14,6 +14,7 @@ export class TradeTrackerComponent implements OnInit {
   filteredSymbols!: string[];
   portfolioId: number = this.service.portfolioId
   tradeHistory!: ITradeHistory[];
+  groupedTrades!: any;
   lastPnl!: number;
   updatePortfolio: boolean = true;
   myDate = new Date().toLocaleDateString();
@@ -27,11 +28,14 @@ export class TradeTrackerComponent implements OnInit {
     total: -1,
     type: "",
     createdDate: "",
-    accumulated: -1,
+    totalInvested: -1,
     totalUnits: -1,
     averageBuy: -1,
     pnl: -1,
+    totalPnl: -1
   }
+  public page = 1
+  public pageSize = 10
 
   formGroup!: FormGroup;
 
@@ -90,11 +94,67 @@ export class TradeTrackerComponent implements OnInit {
 
   getAllTrades(pid) {
     this.service.getAllTrades(pid).subscribe(result => {
+      if (this.tradeHistory == null) {
+
+      }
       this.tradeHistory = result;
       this.tradeHistory.sort((a, b) => a.symbol.localeCompare(b.symbol));
+      this.sortByDate(this.tradeHistory)
       this.getPnl();
       console.log(this.tradeHistory);
     }, error => console.log(error));
+  }
+
+  sortByDate(array) {
+    this.groupTrades(array)
+    let tradeHistoryByDate: ITradeHistory[] = []
+    let tempArray: any
+    for (const key in this.groupedTrades) {
+      tempArray = []
+      this.groupedTrades[key].forEach(element => {
+        element.createdDate = new Date(element.createdDate)
+        tempArray.push(element)
+      })
+      tempArray.sort(
+        (objA, objB) => objA.createdDate.getTime() - objB.createdDate.getTime(),
+      );
+      // tempArray.forEach(element => {
+      //   this.tradeHistoryByDate.push(element)
+      // });
+      tradeHistoryByDate = [...tradeHistoryByDate, ...tempArray]
+    }
+    // this.tradeHistory = []
+    this.tradeHistory = tradeHistoryByDate
+  }
+
+  // sortByDate(array) {
+  //   this.groupTrades(array)
+  //   let tempArray
+  //   for (const key in this.groupedTrades) {
+  //     tempArray = []
+  //     this.groupedTrades[key].forEach(element => {
+  //       element.createdDate = new Date(element.createdDate)
+  //       tempArray.push(element)
+  //     })
+  //     tempArray.sort(
+  //       (objA, objB) => objA.createdDate.getTime() - objB.createdDate.getTime(),
+  //     );
+  //     this.tradeHistory = []
+  //     tempArray.forEach(element => {
+  //       this.tradeHistory.push(element)
+  //     });
+  //   }
+  //   // this.tradeHistory = []
+  //   // this.tradeHistory = this.tradeHistoryByDate
+  // }
+
+  groupTrades(array) {
+    let result = array.reduce(function (r, a) {
+      r[a.symbol] = r[a.symbol] || [];
+      r[a.symbol].push(a);
+      return r;
+    }, Object.create(null));
+    this.groupedTrades = result;
   }
 
   postTrade(pid: number, symbol: string, units: number, price: number, type: string, date: string) {
@@ -127,45 +187,53 @@ export class TradeTrackerComponent implements OnInit {
   }
 
   getPnl() {
-    let counter = 0;
+    let unitsCount = 0
     let avgBuyPrice = 0;
     let totalUnits = 0;
-    let totalAccumulated = 0;
+    let totalInvested = 0;
     let totalTradePrice = 0;
+    let totalPnl = 0;
     for (let i = 0; i < this.tradeHistory.length; i++) {
+      totalTradePrice = this.tradeHistory[i].price * this.tradeHistory[i].units;
+      this.tradeHistory[i].total = totalTradePrice;
       if (i == 0 || i == this.tradeHistory.length - 1 || this.tradeHistory[i].symbol != this.tradeHistory[i - 1].symbol) {
-        counter = 1;
-        avgBuyPrice = this.tradeHistory[i].price;
+        unitsCount = unitsCount + this.tradeHistory[i].units
+        totalInvested = totalTradePrice;
+        this.tradeHistory[i].totalInvested = totalInvested;
+        avgBuyPrice = this.tradeHistory[i].price
         this.tradeHistory[i].averageBuy = avgBuyPrice;
         totalUnits = this.tradeHistory[i].units;
         this.tradeHistory[i].totalUnits = totalUnits;
         totalTradePrice = this.tradeHistory[i].price * this.tradeHistory[i].units;
         this.tradeHistory[i].total = totalTradePrice;
-        totalAccumulated = totalTradePrice;
-        this.tradeHistory[i].accumulated = totalAccumulated;
       }
       else {
-        counter = counter + 1;
-        totalTradePrice = this.tradeHistory[i].price * this.tradeHistory[i].units;
-        this.tradeHistory[i].total = totalTradePrice;
+        // totalTradePrice = this.tradeHistory[i].price * this.tradeHistory[i].units;
+        // this.tradeHistory[i].total = totalTradePrice;
         if (this.tradeHistory[i].type == "Buy") {
-          avgBuyPrice = (avgBuyPrice + this.tradeHistory[i].price) / counter;
+          unitsCount = unitsCount + this.tradeHistory[i].units
+          totalInvested = totalInvested + totalTradePrice;
+          this.tradeHistory[i].totalInvested = totalInvested;
+          avgBuyPrice = totalInvested / unitsCount
           this.tradeHistory[i].averageBuy = avgBuyPrice;
           totalUnits = totalUnits + this.tradeHistory[i].units;
           this.tradeHistory[i].totalUnits = totalUnits;
-          totalAccumulated = totalAccumulated + totalTradePrice;
-          this.tradeHistory[i].accumulated = totalAccumulated;
         }
         else if (this.tradeHistory[i].type == "Sell") {
-          this.tradeHistory[i].pnl = (this.tradeHistory[i].price - avgBuyPrice) * this.tradeHistory[i].units;
+          unitsCount = unitsCount - this.tradeHistory[i].units
+          totalInvested = totalInvested - totalTradePrice;
+          this.tradeHistory[i].totalInvested = totalInvested;
+          avgBuyPrice = totalInvested / unitsCount
           this.tradeHistory[i].averageBuy = avgBuyPrice;
           totalUnits = totalUnits - this.tradeHistory[i].units;
           this.tradeHistory[i].totalUnits = totalUnits;
-          totalAccumulated = totalAccumulated - totalTradePrice;
-          this.tradeHistory[i].accumulated = totalAccumulated;
+          this.tradeHistory[i].pnl = (avgBuyPrice - this.tradeHistory[i].price) * this.tradeHistory[i].units;
+          totalPnl = totalPnl + this.tradeHistory[i].pnl
+          this.tradeHistory[i].totalPnl = totalPnl
         }
       }
     }
   }
+
 
 }

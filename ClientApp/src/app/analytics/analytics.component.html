@@ -1,18 +1,31 @@
-<div class="container">
-    <div class="row">
-        <div id="divChart1" class="col-3">
-            <h2 class="text-center">Assets Units</h2>
-            <canvas id="pieChartUnits"></canvas>
-        </div>
-        <!-- <div class="col-6">
-            
-        </div> -->
+<div class="container mt-5 p-5">
+    <div class="row justify-content-center">
+        <h1 class="text-primary text-center">Portfolio Overview</h1>
         <div id="divChart2" class="col-3">
             <h2 class="text-center">Total $ Value</h2>
             <canvas id="pieChartValue"></canvas>
         </div>
-    </div>
-    <div class="row">
 
+        <div id="divChart1" class="col-6 ms-5">
+            <h2 class="text-center">Assets Units</h2>
+            <canvas id="pieChartUnits"></canvas>
+        </div>
+
+    </div>
+
+    <div class="mt-5 p-5">
+        <h1 class="text-primary text-center">Trades Overview</h1>
+        <div *ngFor="let asset of objectTradeKeys; let i = index">
+            <div class="row" *ngIf="i<3">
+                <div class="col ">
+                    <h2 class="text-center">{{objectTradeKeys[2*i]}}</h2>
+                    <canvas id={{objectTradeKeys[2*i]}}></canvas>
+                </div>
+                <div class="col">
+                    <h2 class="text-center">{{objectTradeKeys[2*i+1]}}</h2>
+                    <canvas id={{objectTradeKeys[2*i+1]}}></canvas>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

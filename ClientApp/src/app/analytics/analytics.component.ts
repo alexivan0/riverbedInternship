@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { registerables, Chart } from 'chart.js';
 import { AppDataService, IAsset, ITradeHistory } from '../services/app-data.service';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { firstValueFrom, map, Observable, Subscription, switchMap, take } from 'rxjs';
+import { firstValueFrom, last, map, Observable, Subscription, switchMap, take } from 'rxjs';
 
 
 
@@ -17,18 +17,13 @@ export class AnalyticsComponent implements OnInit {
 
   portfolioId: number = this.service.portfolioId;
   assetList!: IAsset[];
-  // assetListUnitsCount: number[] = [];
-  // assetListUnitsSymbols: string[] = [];
-  // assetListValueCount: number[] = [];
-  // assetListValueSymbols: string[] = [];
-  // colors: any = [];
   tradesArray!: ITradeHistory[];
-  groupedTrades
+  groupedTrades!: any;
   unixtime!: number;
   assetListCount: number[] = [];
   assetListSymbols: string[] = [];
   subscription!: Subscription
-
+  objectTradeKeys: string[] = []
 
 
 
@@ -38,44 +33,23 @@ export class AnalyticsComponent implements OnInit {
   ngOnInit(): void {
     this.getTrades();
     Chart.register(ChartDataLabels, ...registerables);
-    // this.subscription = this.service.sharedArray$.subscribe(result => {
-    //   this.assetList = result
-    //   console.log("analytics behavior subject")
-    // })
     this.subscription = this.service.sharedArray$.subscribe(result => {
+      // if (result != null) {
       if (this.assetList == null) {
+        result.sort((a, b) => a.symbol.localeCompare(b.symbol))
         this.assetList = result
         this.createCharts();
       }
       else {
         this.subscription.unsubscribe();
-        console.log('unsubscribed')
       }
+      // }
     })
-    // this.service.sharedArray$.subscribe(result => {
-    //   this.createCharts();
-    // }).unsubscribe()
-
-
-    // this.subscription = this.getBehaviorSubject().subscribe(result => {
-    //   this.createCharts();
-    // })
-    // this.subscription.unsubscribe();
-    // this.service.sharedArray$.pipe(map(result => this.assetList = result)).subscribe(result => this.createCharts()).unsubscribe();
-    // this.getBehaviorSubject().then(result => {
-    //   this.createCharts();
-    // })
-    // this.getBehaviorSubject()
   }
 
   ngOnDestroy() {
     this.subscription.unsubscribe()
   }
-
-  // async getBehaviorSubject() {
-  //   this.assetList = await firstValueFrom(this.service.sharedArray$)
-  //   console.log(this.assetList, "behavior subject")
-  // }
 
 
   createCharts() {
@@ -138,6 +112,7 @@ export class AnalyticsComponent implements OnInit {
           }]
         },
         options: {
+          responsive: true,
           plugins: {
             legend: {
               display: false
@@ -185,14 +160,13 @@ export class AnalyticsComponent implements OnInit {
           }]
         },
         options: {
+          responsive: true,
           plugins: {
             datalabels: {
               formatter: (value, ctx) => {
                 let sum = 0;
                 let dataArr = ctx.chart.config.data.datasets[0].data;
                 let dataLabels = ctx.chart.config.data.labels
-                // console.log(dataLabels)
-                // console.log(dataLabels![dataArr.indexOf(value)])
                 dataArr.map((data: any) => {
                   sum += data;
                 });
@@ -212,52 +186,139 @@ export class AnalyticsComponent implements OnInit {
   }
 
 
-  //TODO : put dates(average?) on portfolio assets?
-  getUnixTime(tradeDate) {
-    const formatYmd = date => date.toISOString().slice(0, 10);
-    const formatDate = formatYmd(new Date(tradeDate));
-    console.log(formatDate)
-    const unixTime = Math.floor(new Date(formatDate).getTime())
-    // const formatDate = formatYmd(tradeDate);
-    // const unixTime = Math.floor(new Date(formatDate).getTime())
-    console.log(unixTime);
-    return unixTime;
-  }
 
   getTrades() {
-    this.service.getAllTrades(this.portfolioId).subscribe(result => {
+    this.service.getAllTradesDto(this.portfolioId).subscribe((result: any) => {
       this.tradesArray = result;
-      console.log(this.tradesArray)
-      this.groupTradesBySymbol();
+      this.createDynamicCharts();
     })
   }
 
-  groupTradesBySymbol() {
+  createDynamicCharts() {
+    // take the tradesArray and convert it into an object of key[symbol] = value[array of trade objects]
     let result = this.tradesArray.reduce(function (r, a) {
       r[a.symbol] = r[a.symbol] || [];
       r[a.symbol].push(a);
       return r;
     }, Object.create(null));
-
     this.groupedTrades = result;
-    console.log(this.groupedTrades)
-    console.log(this.groupedTrades.ADA[0].createdDate);
-    var tradeTime = this.groupedTrades.ADA[0].createdDate;
-    // var newTradeTime = oldTradeTime.substring(0, oldTradeTime.length - 9);
-    console.log(tradeTime);
+    console.log(this.groupedTrades, 'grouped trades')
 
-    this.unixtime = this.getUnixTime(tradeTime);
+
+    // sort groupTrades by date ascending
+    Object.entries(this.groupedTrades).forEach((element: any) => {
+      element[1].sort(function (a, b) {
+        return new Date(a.createdDate).valueOf() - new Date(b.createdDate).valueOf();
+      });
+    })
+
+
+    // get the keys for every symbol in the object
+    this.objectTradeKeys = Object.keys(this.groupedTrades)
+    // console.log(this.objectTradeKeys, 'object trade keys')
+
+    // iterate over every entry in the groupTrades object
+    Object.entries(this.groupedTrades).forEach((element: any) => {
+      console.log(element, "enties element")
+
+      // store the name of the current symbol in assetSymbol
+      let assetSymbol = element[0]
+
+      // convert the first trade date to unix time and store it in startTime
+      let startTime = this.service.getUnixTime(element[1][0].createdDate)
+
+      let pricesArray: number[] = []
+      let assetPricesArray: number[] = []
+      let datesArray: string[] = []
+
+      // create an object of key[unixtime] = value[totalUnits]
+      let symbolsTotalUnitsDto: { [key: number]: number } = {}
+
+
+
+      //populate the symbolsTotalUnitsDto object
+      element[1].forEach(element => {
+        symbolsTotalUnitsDto[this.service.getUnixTime(element.createdDate)] = element.totalUnits;
+      })
+      console.log(symbolsTotalUnitsDto, 'symbols units dto')
+
+      // create a get request for every symbol on 1day timeframe and starting from startTime date
+      this.service.getAssetKlines(assetSymbol, "1d", startTime).subscribe((result: any) => {
+        let lastTotal = 0
+        //for every symbol, iterate over every day data
+        result.forEach(day => {
+          //convert the current day date to unix time and store it into the datesArray
+          datesArray.push(this.fromUnixToDate(day[0]))
+          //check if the current day date matches the first date in the datesArray (comparing both in unix time)
+          if (day[0] == +Object.keys(symbolsTotalUnitsDto)[0]) {
+            //store the last total(of asset units) in lastTotal
+            lastTotal = Object.entries(symbolsTotalUnitsDto)[0][1]
+            //delete the first entry from the object since we already matched it
+            delete symbolsTotalUnitsDto[Object.keys(symbolsTotalUnitsDto)[0]];
+          }
+          // push to pricesArray the current day price * lastTotal to get the total units held price for that day
+          // for the next day iteration, if the asset totalUnits didn't change(by buying or selling them), totalUnits for the next day remains the same
+          pricesArray.push((day[1] % 1000000) * lastTotal)
+          // push to assetPricesArray the current day price
+          assetPricesArray.push(day[1] % 1000000)
+        });
+        // create a chart with the below parameters
+        this.createTradeCharts(assetSymbol, pricesArray, assetPricesArray, datesArray)
+      })
+    });
   }
 
-  // Ideea
-  // [ADA][Trade 01][ShowGraph]
+
+  fromUnixToDate(unixDate) {
+    //add 24hours to unix date
+    let date = new Date(unixDate);
+
+    var day = date.getUTCDate();
+    var month = date.getUTCMonth() + 1; //months from 1-12
+
+    var formatedDate = (`${day}/${month}`)
+
+    return formatedDate
+  }
 
 
-
-  // getRandomColor() {
-  //   for (let i = 0; i < this.assetList.length; i++) {
-  //     this.colors.push('#' + Math.floor(Math.random() * 16777215).toString(16));
-  //   }
-  // }
+  createTradeCharts(asset, pricesArray, assetPricesArray, datesArray) {
+    const pieChartValue = new Chart(`${asset}`, {
+      type: 'line',
+      data: {
+        labels: datesArray,
+        datasets: [{
+          label: 'Total $ Invested',
+          data: pricesArray,
+        },
+        {
+          label: 'Asset $ Price',
+          data: assetPricesArray,
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          datalabels: {
+            display: false
+          }
+        },
+        scales: {
+          y: {
+            type: 'logarithmic',
+          }
+        }
+      },
+    });
+  }
 
 }
+
+
+
+
+
+
+
+// tehnologii folosite:
+// Angular Material, Angular Forms, Bootstrap, nG Bootstrap, rxJs, chartJs, Auth0 jwt.

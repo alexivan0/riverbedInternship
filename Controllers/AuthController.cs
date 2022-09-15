@@ -54,7 +54,7 @@ namespace PortfolioTracker.Controllers
                     issuer: "https://localhost:44429",
                     audience: "https://localhost:44429",
                     claims: claims,
-                    expires: DateTime.Now.AddMinutes(5),
+                    expires: DateTime.Now.AddMinutes(30),
                     signingCredentials: signingCredentials
                 );
 
