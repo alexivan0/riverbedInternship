@@ -1,4 +1,4 @@
-A Web Application developed using Dotnet & Angular
+A Web Application developed using Dotnet, Angular and the Binance API.
 
 Technologies used: Dotnet & Angular, Entity Framework, Microsoft SQL Server, Angular Material, Angular Forms, Bootstrap, nG Bootstrap, rxJs, chartJs, Auth0 JWT, and probably others I can't remember.
 
